@@ -6,7 +6,7 @@ var test = require('tape')
 var type = require('../lib/token-type')
 
 function doLex (exp) {
-  return new Lexer(exp).lex()
+  return new Lexer().lex(exp)
 }
 
 // function getNumber(token) {
@@ -50,6 +50,15 @@ test('Lexer:identifier', function (t) {
     doLex('mauricio'),
     [
       { value: 'mauricio', type: type.SYMBOL }
+    ]
+  )
+  t.deepEqual(
+    doLex('a b $_ _3'),
+    [
+      { value: 'a', type: type.SYMBOL },
+      { value: 'b', type: type.SYMBOL },
+      { value: '$_', type: type.SYMBOL },
+      { value: '_3', type: type.SYMBOL }
     ]
   )
   t.end()

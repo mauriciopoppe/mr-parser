@@ -1,1 +1,2 @@
 require('./lexer')
+require('./parser')
