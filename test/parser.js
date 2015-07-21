@@ -127,3 +127,84 @@ test('parser:multiplicative', function (t) {
   }])
   t.end()
 })
+
+test('parser:parentheses', function (t) {
+  t.deepEquals(parse('(32)'), [{
+    value: '32',
+    valueType: 'number'
+  }])
+  t.deepEquals(parse('(1 + 2 - 3)'), [{
+    op: '+',
+    args: [{
+      value: '1',
+      valueType: 'number'
+    }, {
+      op: '-',
+      args: [
+        { value: '2', valueType: 'number' },
+        { value: '3', valueType: 'number' }
+      ]
+    }]
+  }])
+  t.deepEquals(parse('(1 + 2) - 3'), [{
+    op: '-',
+    args: [{
+      op: '+',
+      args: [
+        { value: '1', valueType: 'number' },
+        { value: '2', valueType: 'number' }
+      ]
+    }, {
+      value: '3',
+      valueType: 'number'
+    }]
+  }])
+  t.deepEquals(parse('1 * (2 + 3) * 4'), [{
+    op: '*',
+    args: [{
+      value: '1',
+      valueType: 'number'
+    }, {
+      op: '*',
+      args: [{
+        op: '+',
+        args: [
+          { value: '2', valueType: 'number' },
+          { value: '3', valueType: 'number' }
+        ]
+      }, {
+        value: '4',
+        valueType: 'number'
+      }]
+    }]
+  }])
+  t.throws(function () {
+    parse('1 + (2 + 3')
+  })
+  t.throws(function () {
+    parse('1 + 2 + 3)')
+  })
+  t.end()
+})
+
+test('parser:block', function (t) {
+  t.deepEquals(parse('1;'), [{
+    value: '1',
+    valueType: 'number'
+  }])
+  t.deepEquals(parse('1;2;'), [{
+    value: '1',
+    valueType: 'number'
+  }, {
+    value: '2',
+    valueType: 'number'
+  }])
+  t.deepEquals(parse('1;2;'), [{
+    value: '1',
+    valueType: 'number'
+  }, {
+    value: '2',
+    valueType: 'number'
+  }])
+  t.end()
+})

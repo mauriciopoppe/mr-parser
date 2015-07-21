@@ -13,7 +13,7 @@
 
 WORK IN PROGRESS
 
-parse mathematical expressions into an ast
+parses mathematical expressions into an ast
 
 ## Install
 
