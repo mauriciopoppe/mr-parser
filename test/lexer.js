@@ -70,9 +70,9 @@ test('Lexer:string', function (t) {
 
 test('Lexer:identifier', function (t) {
   t.deepEqual(
-    doLex('mauricio'),
+    doLex('foo'),
     [
-      { value: 'mauricio', type: type.SYMBOL }
+      { value: 'foo', type: type.SYMBOL }
     ]
   )
   t.deepEqual(

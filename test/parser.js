@@ -17,6 +17,214 @@ test('parser:number', function (t) {
   t.end()
 })
 
+test('parser:ternary', function (t) {
+  t.deepEquals(parse('1 ? a : b'), [{
+    condition: { value: '1', valueType: 'number' },
+    trueExpr: { name: 'a' },
+    falseExpr: { name: 'b' }
+  }])
+  t.deepEquals(parse('"foo" === "bar" ? a : b'), [{
+    condition: {
+      op: '===',
+      args: [
+        { value: 'foo', valueType: 'string' },
+        { value: 'bar', valueType: 'string' }
+      ]
+    },
+    trueExpr: { name: 'a' },
+    falseExpr: { name: 'b' }
+  }])
+  t.deepEquals(parse('1 ? 2 ? a : b : c'), [{
+    condition: { value: '1', valueType: 'number' },
+    trueExpr: {
+      condition: { value: '2', valueType: 'number' },
+      trueExpr: { name: 'a' },
+      falseExpr: { name: 'b' }
+    },
+    falseExpr: { name: 'c' }
+  }])
+  t.end()
+})
+
+test('parser:logicalOR', function (t) {
+  t.deepEquals(parse('1 || 2'), [{
+    op: '||',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('1 || 3 || 2'), [{
+    op: '||',
+    args: [
+      { value: '1', valueType: 'number' },
+      {
+        op: '||',
+        args: [
+          { value: '3', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }
+    ]
+  }])
+  t.end()
+})
+
+test('parser:logicalXOR', function (t) {
+  t.deepEquals(parse('1 xor 2'), [{
+    op: 'xor',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('1 xor 3 xor 2'), [{
+    op: 'xor',
+    args: [
+      { value: '1', valueType: 'number' },
+      {
+        op: 'xor',
+        args: [
+          { value: '3', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }
+    ]
+  }])
+  t.end()
+})
+
+test('parser:logicalAND', function (t) {
+  t.deepEquals(parse('1 && 2'), [{
+    op: '&&',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('1 && 3 && 2'), [{
+    op: '&&',
+    args: [
+      { value: '1', valueType: 'number' },
+      {
+        op: '&&',
+        args: [
+          { value: '3', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }
+    ]
+  }])
+  t.end()
+})
+
+test('parser:bitwiseOR', function (t) {
+  t.deepEquals(parse('1 | 2'), [{
+    op: '|',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('1 | 3 | 2'), [{
+    op: '|',
+    args: [
+      { value: '1', valueType: 'number' },
+      {
+        op: '|',
+        args: [
+          { value: '3', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }
+    ]
+  }])
+  t.end()
+})
+
+test('parser:bitwiseXOR', function (t) {
+  t.deepEquals(parse('1 ^| 2'), [{
+    op: '^|',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('1 ^| 3 ^| 2'), [{
+    op: '^|',
+    args: [
+      { value: '1', valueType: 'number' },
+      {
+        op: '^|',
+        args: [
+          { value: '3', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }
+    ]
+  }])
+  t.end()
+})
+
+test('parser:bitwiseAND', function (t) {
+  t.deepEquals(parse('1 & 2'), [{
+    op: '&',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('1 & 3 & 2'), [{
+    op: '&',
+    args: [
+      { value: '1', valueType: 'number' },
+      {
+        op: '&',
+        args: [
+          { value: '3', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }
+    ]
+  }])
+  t.end()
+})
+
+test('parser:relational', function (t) {
+  t.deepEquals(parse('1 != 2'), [{
+    op: '!=',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.end()
+})
+
+test('parser:shift', function (t) {
+  t.deepEquals(parse('1 << 2'), [{
+    op: '<<',
+    args: [
+      { value: '1', valueType: 'number' },
+      { value: '2', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('1 << 3 >> 2'), [{
+    op: '<<',
+    args: [
+      { value: '1', valueType: 'number' },
+      {
+        op: '>>',
+        args: [
+          { value: '3', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }
+    ]
+  }])
+  t.end()
+})
+
 test('parser:additive', function (t) {
   t.deepEquals(parse('32 + 3'), [{
     op: '+',
@@ -38,6 +246,8 @@ test('parser:additive', function (t) {
       ]
     }]
   }])
+  t.throws(function () { parse('1 + 2 -') })
+  t.throws(function () { parse('1 + 2 - *') })
   t.end()
 })
 
@@ -173,7 +383,8 @@ test('parser:multiplicative', function (t) {
       }
     ]
   }])
-
+  // xor is a reserved words
+  t.throws(function () { parse('2xor') })
   t.end()
 })
 
