@@ -7,4 +7,5 @@
 
 'use strict'
 
-module.exports = require('./lib/mr-parser')
+module.exports.Lexer = require('./lib/Lexer')
+module.exports.Parser = require('./lib/Parser')

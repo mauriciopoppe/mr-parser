@@ -17,6 +17,20 @@ test('parser:number', function (t) {
   t.end()
 })
 
+test('parser:assignment', function (t) {
+  t.deepEquals(parse('x = 1 + 2'), [{
+    name: 'x',
+    expr: {
+      op: '+',
+      args: [
+        { value: '1', valueType: 'number' },
+        { value: '2', valueType: 'number' }
+      ]
+    }
+  }])
+  t.end()
+})
+
 test('parser:ternary', function (t) {
   t.deepEquals(parse('1 ? a : b'), [{
     condition: { value: '1', valueType: 'number' },
