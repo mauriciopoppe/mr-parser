@@ -247,16 +247,16 @@ test('parser:additive', function (t) {
     ]
   }])
   t.deepEquals(parse('1 + 2 - 3'), [{
-    op: '+',
+    op: '-',
     args: [{
-      value: '1',
-      valueType: 'number'
-    }, {
-      op: '-',
+      op: '+',
       args: [
-        { value: '2', valueType: 'number' },
-        { value: '3', valueType: 'number' }
+        { value: '1', valueType: 'number' },
+        { value: '2', valueType: 'number' }
       ]
+    }, {
+      value: '3',
+      valueType: 'number'
     }]
   }])
   t.throws(function () { parse('1 + 2 -') })
@@ -275,14 +275,14 @@ test('parser:multiplicative', function (t) {
   t.deepEquals(parse('1 * 2 * 3'), [{
     op: '*',
     args: [{
-      value: '1',
-      valueType: 'number'
-    }, {
       op: '*',
       args: [
-        { value: '2', valueType: 'number' },
-        { value: '3', valueType: 'number' }
+        { value: '1', valueType: 'number' },
+        { value: '2', valueType: 'number' }
       ]
+    }, {
+      value: '3',
+      valueType: 'number'
     }]
   }])
   t.deepEquals(parse('1 * 2 + 3'), [{
@@ -311,6 +311,29 @@ test('parser:multiplicative', function (t) {
       ]
     }]
   }])
+  t.deepEquals(parse('1 / 2 * 3 / 4 * 5'), [{
+    op: '*',
+    args: [{
+      op: '/',
+      args: [{
+        op: '*',
+        args: [{
+          op: '/',
+          args: [{
+            value: '1', valueType: 'number'
+          }, {
+            value: '2', valueType: 'number'
+          }]
+        }, {
+          value: '3', valueType: 'number'
+        }]
+      }, {
+        value: '4', valueType: 'number'
+      }]
+    }, {
+      value: '5', valueType: 'number'
+    }]
+  }])
   t.deepEquals(parse('1 * 2 + 3 * 4'), [{
     op: '+',
     args: [{
@@ -330,22 +353,22 @@ test('parser:multiplicative', function (t) {
   t.deepEquals(parse('1 % 2 + 3 / 4 + 5'), [{
     op: '+',
     args: [{
-      op: '%',
-      args: [
-        { value: '1', valueType: 'number' },
-        { value: '2', valueType: 'number' }
-      ]
-    }, {
       op: '+',
       args: [{
+        op: '%',
+        args: [
+          { value: '1', valueType: 'number' },
+          { value: '2', valueType: 'number' }
+        ]
+      }, {
         op: '/',
         args: [
           { value: '3', valueType: 'number' },
           { value: '4', valueType: 'number' }
         ]
-      },
-        { value: '5', valueType: 'number' }
-      ]
+      }]
+    }, {
+      value: '5', valueType: 'number'
     }]
   }])
   t.deepEquals(parse('2x'), [{
@@ -461,6 +484,19 @@ test('parser:pow', function (t) {
       valueType: 'number'
     }]
   }])
+  t.deepEquals(parse('2 ^ 3 ^ 4'), [{
+    op: '^',
+    args: [{
+      value: '2', valueType: 'number'
+    }, {
+      op: '^',
+      args: [{
+        value: '3', valueType: 'number'
+      }, {
+        value: '4', valueType: 'number'
+      }]
+    }]
+  }])
   t.deepEquals(parse('1 ^ -2'), [{
     op: '^',
     args: [{
@@ -568,16 +604,16 @@ test('parser:parentheses', function (t) {
     valueType: 'number'
   }])
   t.deepEquals(parse('(1 + 2 - 3)'), [{
-    op: '+',
+    op: '-',
     args: [{
-      value: '1',
-      valueType: 'number'
-    }, {
-      op: '-',
+      op: '+',
       args: [
-        { value: '2', valueType: 'number' },
-        { value: '3', valueType: 'number' }
+        { value: '1', valueType: 'number' },
+        { value: '2', valueType: 'number' }
       ]
+    }, {
+      value: '3',
+      valueType: 'number'
     }]
   }])
   t.deepEquals(parse('(1 + 2) - 3'), [{
@@ -596,20 +632,20 @@ test('parser:parentheses', function (t) {
   t.deepEquals(parse('1 * (2 + 3) * 4'), [{
     op: '*',
     args: [{
-      value: '1',
-      valueType: 'number'
-    }, {
       op: '*',
       args: [{
+        value: '1',
+        valueType: 'number'
+      }, {
         op: '+',
         args: [
           { value: '2', valueType: 'number' },
           { value: '3', valueType: 'number' }
         ]
-      }, {
-        value: '4',
-        valueType: 'number'
       }]
+    }, {
+      value: '4',
+      valueType: 'number'
     }]
   }])
   t.throws(function () {
@@ -639,6 +675,90 @@ test('parser:block', function (t) {
   }, {
     value: '2',
     valueType: 'number'
+  }])
+  t.end()
+})
+
+test('parser:complex', function (t) {
+  t.deepEquals(parse('sin(exp(x))'), [{
+    name: 'sin',
+    args: [{
+      name: 'exp',
+      args: [{
+        name: 'x'
+      }]
+    }]
+  }])
+  t.deepEquals(parse('tan(x)'), [{
+    name: 'tan',
+    args: [{
+      name: 'x'
+    }]
+  }])
+  t.deepEquals(parse('1/cos(PI)'), [{
+    op: '/',
+    args: [{
+      value: '1', valueType: 'number'
+    }, {
+      name: 'cos',
+      args: [{
+        name: 'PI'
+      }]
+    }]
+  }])
+  t.deepEquals(parse('[1, 3]^2'), [{
+    op: '^',
+    args: [{
+      nodes: [
+        { value: '1', valueType: 'number' },
+        { value: '3', valueType: 'number' }
+      ]
+    }, {
+      value: '2', valueType: 'number'
+    }]
+  }])
+  t.deepEquals(parse('sin(exp(x)) + tan(x) - 1 / cos(PI) * [1, 3]^2'), [{
+    op: '-',
+    args: [{
+      op: '+',
+      args: [{
+        name: 'sin',
+        args: [{
+          name: 'exp',
+          args: [{
+            name: 'x'
+          }]
+        }]
+      }, {
+        name: 'tan',
+        args: [{
+          name: 'x'
+        }]
+      }]
+    }, {
+      op: '*',
+      args: [{
+        op: '/',
+        args: [{
+          value: '1', valueType: 'number'
+        }, {
+          name: 'cos',
+          args: [{
+            name: 'PI'
+          }]
+        }]
+      }, {
+        op: '^',
+        args: [{
+          nodes: [
+            { value: '1', valueType: 'number' },
+            { value: '3', valueType: 'number' }
+          ]
+        }, {
+          value: '2', valueType: 'number'
+        }]
+      }]
+    }]
   }])
   t.end()
 })

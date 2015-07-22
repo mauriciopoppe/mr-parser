@@ -1,7 +1,7 @@
 {
   "name": "mr-parser",
   "version": "0.2.0",
-  "description": "parse mathematical expressions into an ast",
+  "description": "parses mathematical expressions and outputs an AST that represents the expression",
   "bugs": "https://github.com/maurizzzio/mr-parser/issues",
   "license": "MIT",
   "main": "index.js",
@@ -36,7 +36,7 @@
     "istanbul": "istanbul cover test/index.js",
     "lint": "standard",
     "doctoc": "doctoc .",
-    "test": "node test/index.js | tap-dot",
+    "test": "node test/index.js | tap-spec",
     "test:watch": "gaze 'npm test' 'test/**/*.js' 'lib/**/*.js' 'index.js'",
     "start": "npm run test:watch"
   }
