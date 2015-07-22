@@ -6,7 +6,7 @@ var Parser = mrParser.Parser
 var test = require('tape')
 
 function parse (exp) {
-  return new Parser(new Lexer()).parse(exp)
+  return new Parser(new Lexer()).parse(exp).blocks
 }
 
 test('parser:number', function (t) {
@@ -410,51 +410,43 @@ test('parser:unary', function (t) {
       valueType: 'number'
     }, {
       op: '-',
-      args: [
-        { value: '2', valueType: 'number' }
-      ]
+      argument: { value: '2', valueType: 'number' }
     }]
   }])
   t.deepEquals(parse('+-+2'), [{
     op: '+',
-    args: [{
+    argument: {
       op: '-',
-      args: [{
+      argument: {
         op: '+',
-        args: [{
+        argument: {
           value: '2', valueType: 'number'
-        }]
-      }]
-    }]
+        }
+      }
+    }
   }])
   t.deepEquals(parse('-1 - -2'), [{
     op: '-',
     args: [{
       op: '-',
-      args: [
-        { value: '1', valueType: 'number' }
-      ]
+      argument: { value: '1', valueType: 'number' }
     }, {
       op: '-',
-      args: [
-        { value: '2', valueType: 'number' }
-      ]
+      argument: { value: '2', valueType: 'number' }
     }]
   }])
   t.deepEquals(parse('-(3 - -2)'), [{
     op: '-',
-    args: [{
+    argument: {
       op: '-',
       args: [
         { value: '3', valueType: 'number' },
         {
           op: '-',
-          args: [
-            { value: '2', valueType: 'number' }
-          ]
+          argument: { value: '2', valueType: 'number' }
         }
       ]
-    }]
+    }
   }])
   t.end()
 })
@@ -477,9 +469,7 @@ test('parser:pow', function (t) {
       valueType: 'number'
     }, {
       op: '-',
-      args: [
-        { value: '2', valueType: 'number' }
-      ]
+      argument: { value: '2', valueType: 'number' }
     }]
   }])
   t.end()

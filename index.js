@@ -9,3 +9,4 @@
 
 module.exports.Lexer = require('./lib/Lexer')
 module.exports.Parser = require('./lib/Parser')
+module.exports.nodeTypes = require('./lib/node/')
