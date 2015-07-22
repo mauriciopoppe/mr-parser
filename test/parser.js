@@ -1,12 +1,11 @@
 'use strict'
 
 var mrParser = require('../')
-var Lexer = mrParser.Lexer
 var Parser = mrParser.Parser
 var test = require('tape')
 
 function parse (exp) {
-  return new Parser(new Lexer()).parse(exp).blocks
+  return new Parser().parse(exp).blocks
 }
 
 test('parser:number', function (t) {
