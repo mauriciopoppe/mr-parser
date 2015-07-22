@@ -318,6 +318,36 @@ test('parser:string', function (t) {
   t.end()
 })
 
+test('parser:array', function (t) {
+  t.deepEquals(parse('[]'), [{
+    nodes: []
+  }])
+  t.deepEquals(parse('[2, 3]'), [{
+    nodes: [
+      { value: '2', valueType: 'number' },
+      { value: '3', valueType: 'number' }
+    ]
+  }])
+  t.deepEquals(parse('[2, 3] + [3, 2]'), [{
+    op: '+',
+    args: [{
+      nodes: [
+        { value: '2', valueType: 'number' },
+        { value: '3', valueType: 'number' }
+      ]
+    }, {
+      nodes: [
+        { value: '3', valueType: 'number' },
+        { value: '2', valueType: 'number' }
+      ]
+    }]
+  }])
+  t.throws(function () { parse('[') })
+  t.throws(function () { parse('[2, 2[]') })
+  t.throws(function () { parse(']') })
+  t.end()
+})
+
 test('parser:parentheses', function (t) {
   t.deepEquals(parse('(32)'), [{
     value: '32',
