@@ -6,7 +6,10 @@ var test = require('tape')
 var type = require('../lib/token-type')
 
 function doLex (exp) {
-  return new Lexer().lex(exp)
+  var tokens = new Lexer().lex(exp)
+  // remove the last token which is EOF
+  tokens.pop()
+  return tokens
 }
 
 // function getNumber(token) {
@@ -35,12 +38,32 @@ test('Lexer:number', function (t) {
   t.equal(doLex('3e-1').length, 1)
 
   // invalid examples
+  t.throws(function () { doLex('.e') })
   t.throws(function () { doLex('.e2') })
   t.throws(function () { doLex('.e2.') })
   t.throws(function () { doLex('.e.2') })
   t.throws(function () { doLex('3.e') })
   t.throws(function () { doLex('.3e') })
   t.throws(function () { doLex('3.ee') })
+  t.throws(function () { doLex('3.e+q') })
+
+  t.end()
+})
+
+test('Lexer:string', function (t) {
+  t.deepEqual(
+    doLex('"123"'),
+    [{ value: '123', type: type.STRING }]
+  )
+
+  t.deepEqual(
+    doLex('"f\'x"'),
+    [{ value: 'f\'x', type: type.STRING }]
+  )
+
+  // invalid
+  t.throws(function () { doLex('"qqq') })
+  t.throws(function () { doLex('qqq"') })
 
   t.end()
 })
