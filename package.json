@@ -1,6 +1,6 @@
 {
   "name": "mr-parser",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "parses mathematical expressions and outputs an AST that represents the expression",
   "bugs": "https://github.com/maurizzzio/mr-parser/issues",
   "license": "MIT",
